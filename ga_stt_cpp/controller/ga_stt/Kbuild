@@ -1,0 +1,12 @@
+ccflags-y += -O2 -I<path-to-eigen> -std=gnu++17 -fno-rtti -fno-exceptions \
+             -Wno-write-strings -fpermissive -Wno-error
+
+ccflags-y += -DEIGEN_DONT_VECTORIZE \
+             -DEIGEN_MAX_ALIGN_BYTES=0 \
+             -DEIGEN_MAX_STATIC_ALIGN_BYTES=0 \
+             -DEIGEN_NO_MALLOC \
+             -DEIGEN_STACK_ALLOCATION_ONLY \
+             -DNDEBUG \
+             -DEIGEN_NO_DEBUG
+
+obj-y += controller_ga_stt.o
