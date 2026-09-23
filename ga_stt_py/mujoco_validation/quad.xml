@@ -1,0 +1,27 @@
+<mujoco model="ga_stt_validation_quad">
+  <!-- Minimal free rigid body matching the DroneParams used in
+       test_closed_loop_convergence.py (m=0.5 kg, J=diag(3e-3,3e-3,5.5e-3)).
+       No rotor/blade aerodynamics: the point of this model is to validate
+       the CONTROL LAW's math (thrust direction + body torque -> rigid-body
+       motion) against MuJoCo's own independent Newton-Euler integrator,
+       not to model a specific real airframe's aerodynamics. Thrust/torque
+       are applied every step from Python via data.xfrc_applied, computed
+       by the SAME ga_stt_controller.compute_control() already verified
+       against the C++ implementation and against RK4 finite-difference
+       ground truth in the test suite. -->
+  <compiler angle="radian"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4"/>
+  <worldbody>
+    <light diffuse=".6 .6 .6" pos="0 0 6" dir="0 0 -1"/>
+    <geom type="plane" size="10 10 0.1" rgba="0.8 0.8 0.8 1"/>
+    <body name="drone" pos="1 1 1">
+      <freejoint name="root"/>
+      <inertial pos="0 0 0" mass="0.5" diaginertia="3.0e-3 3.0e-3 5.5e-3"/>
+      <geom name="body_geom" type="box" size="0.08 0.08 0.02" rgba="0.2 0.4 0.9 1"/>
+      <geom name="arm1" type="capsule" fromto="0 0 0  0.12 0.12 0" size="0.01" rgba="0.2 0.2 0.2 1"/>
+      <geom name="arm2" type="capsule" fromto="0 0 0 -0.12 0.12 0" size="0.01" rgba="0.2 0.2 0.2 1"/>
+      <geom name="arm3" type="capsule" fromto="0 0 0  0.12 -0.12 0" size="0.01" rgba="0.2 0.2 0.2 1"/>
+      <geom name="arm4" type="capsule" fromto="0 0 0 -0.12 -0.12 0" size="0.01" rgba="0.2 0.2 0.2 1"/>
+    </body>
+  </worldbody>
+</mujoco>

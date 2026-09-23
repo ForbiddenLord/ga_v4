@@ -1,0 +1,51 @@
+\begin{table*}[t]
+\centering
+\caption{Obstacle-count scaling study: 25 Monte Carlo trials per cell.
+  \emph{Nominal}: no disturbance.
+  \emph{Disturbed}: $\|\mathbf{w}_p\|\le 0.5$\,N, $\|\mathbf{w}_\tau\|\le 0.05$\,N$\cdot$m.
+  MPC excluded from sweep (\SI{351}{ms}/step); Scenario-1 figures in footnote.
+  CBF infeasibility rate not shown (0\% for all tested configurations).}
+\label{tab:scaling}
+\sisetup{table-format=3.2}
+\begin{tabular}{cl ccc cc cc c}
+\toprule
+& & \multicolumn{3}{c}{Compute time [ms]} &
+  \multicolumn{2}{c}{Nominal safety [\%]} &
+  \multicolumn{2}{c}{Disturbed safety [\%]} &
+  Max $e_p$ (dist.) \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+$N_\text{obs}$ & Algorithm &
+  mean & std & &
+  collision-free & tube-safe &
+  collision-free & tube-safe &
+  mean$\pm$std \\
+\midrule
+5 & \textbf{GA-STT} & \textbf{2.9}  &  0.2  &  &  \textbf{100\%} & \textbf{100\%} & 100\% & 100\% & 0.552$\pm$0.064 \\
+ & Baseline & 2.9  &  0.1  &  &  100\% & 100\% & 100\% & 100\% & 0.733$\pm$0.050 \\
+ & CBF-QP & 6.2  &  0.0  &  &  100\% & 88\% & 100\% & 88\% & 0.840$\pm$0.161 \\
+\midrule
+10 & \textbf{GA-STT} & \textbf{3.7}  &  0.1  &  &  \textbf{96\%} & \textbf{96\%} & 100\% & 100\% & 0.528$\pm$0.060 \\
+ & Baseline & 3.6  &  0.4  &  &  100\% & 100\% & 100\% & 100\% & 0.714$\pm$0.064 \\
+ & CBF-QP & 8.1  &  0.0  &  &  100\% & 68\% & 100\% & 80\% & 0.833$\pm$0.181 \\
+\midrule
+15 & \textbf{GA-STT} & \textbf{4.2}  &  0.2  &  &  \textbf{100\%} & \textbf{100\%} & 100\% & 100\% & 0.553$\pm$0.071 \\
+ & Baseline & 4.2  &  0.2  &  &  100\% & 100\% & 100\% & 100\% & 0.698$\pm$0.057 \\
+ & CBF-QP & 10.2  &  0.1  &  &  100\% & 52\% & 100\% & 60\% & 0.934$\pm$0.224 \\
+\midrule
+20 & \textbf{GA-STT} & \textbf{4.8}  &  0.2  &  &  \textbf{96\%} & \textbf{96\%} & 100\% & 100\% & 0.539$\pm$0.084 \\
+ & Baseline & 4.8  &  0.4  &  &  100\% & 100\% & 100\% & 100\% & 0.691$\pm$0.063 \\
+ & CBF-QP & 12.2  &  0.0  &  &  100\% & 48\% & 100\% & 44\% & 1.029$\pm$0.253 \\
+\midrule
+25 & \textbf{GA-STT} & \textbf{5.5}  &  0.4  &  &  \textbf{100\%} & \textbf{100\%} & 96\% & 96\% & 0.544$\pm$0.070 \\
+ & Baseline & 5.4  &  0.4  &  &  100\% & 100\% & 96\% & 96\% & 0.708$\pm$0.060 \\
+ & CBF-QP & 14.4  &  0.0  &  &  100\% & 40\% & 100\% & 36\% & 1.090$\pm$0.191 \\
+\midrule
+\multicolumn{2}{l}{MPC\textsuperscript{\dag}} &
+  351 & 18 & & 100\% & $>$1.0\textsuperscript{\ddag} & 100\% & $>$1.0\textsuperscript{\ddag} & 1.258 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\small
+\item[\dag] MPC: single Scenario-1 run (5 obstacles). Excluded from sweep due to wall-clock cost.
+\item[\ddag] MPC: no tube-invariance guarantee; $e_p > 1$ observed in Scenario-1.
+\end{tablenotes}
+\end{table*}

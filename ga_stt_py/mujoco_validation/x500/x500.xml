@@ -1,0 +1,82 @@
+<mujoco model="holybro_x500">
+  <!-- Holybro X500 quadrotor, parameters transcribed from the PX4
+       Gazebo SDF you uploaded (Tools/simulation/gz/models/x500_base/
+       model.sdf): base_link mass=2.0 kg, diag inertia
+       (0.021667, 0.021667, 0.04) kg*m^2; 4 rotors each mass=0.016077 kg
+       at (+-0.174, +-0.174, 0.06) m relative to the body origin.
+
+       This is a PRIMITIVE-GEOMETRY reconstruction, not a mesh import:
+       the SDF references .dae/.stl mesh files (NXP-HGD-CF.dae,
+       5010Base.dae, 1345_prop_*.stl, etc.) that were not included in the
+       uploaded file (only the SDF's XML text was) -- MuJoCo needs the
+       actual mesh geometry files to import meshes, which aren't
+       available here. The physically-relevant parameters (mass, per-body
+       inertia via parallel-axis, rotor positions) are transcribed
+       exactly; the box/cylinder shapes below are for visualization and
+       collision only and do not affect the rigid-body dynamics, which
+       are set explicitly via the <inertial> tags. Total mass/inertia
+       (base_link + 4 rotor point masses) were computed once in Python
+       (see the delivery's chat/README) and cross-checked by summing the
+       per-body <inertial> tags below at model-load time (see
+       x500_test_load.py's mass/inertia printout). -->
+  <compiler angle="radian"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4"/>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 3" dir="0 0 -1" directional="true"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <body name="x500" pos="0 0 0.4">
+      <freejoint name="root"/>
+      <!-- base_link: mass and diag inertia exactly as in the SDF -->
+      <inertial pos="0 0 0" mass="2.0" diaginertia="0.02166666666666667 0.02166666666666667 0.04000000000000001"/>
+      <geom name="body_box" type="box" size="0.12 0.12 0.04" rgba="0.15 0.15 0.15 1"/>
+      <geom name="arm0" type="cylinder" fromto="0 0 0  0.174 -0.174 0.06" size="0.008" rgba="0.3 0.3 0.3 1"/>
+      <geom name="arm1" type="cylinder" fromto="0 0 0 -0.174  0.174 0.06" size="0.008" rgba="0.3 0.3 0.3 1"/>
+      <geom name="arm2" type="cylinder" fromto="0 0 0  0.174  0.174 0.06" size="0.008" rgba="0.3 0.3 0.3 1"/>
+      <geom name="arm3" type="cylinder" fromto="0 0 0 -0.174 -0.174 0.06" size="0.008" rgba="0.3 0.3 0.3 1"/>
+
+      <!-- 4 rotors as separate bodies (mass/inertia only, no joint --
+           MuJoCo requires a body to have inertial mass, and modeling
+           each rotor's mass at its true offset, rather than lumping it
+           into base_link at the origin, is what makes the parallel-axis
+           inertia contribution physically real rather than just an
+           added scalar. No revolute joint is added (unlike the SDF's
+           "rotor_N_joint"): propeller spin visualization is not needed
+           for dynamics validation, and a free-spinning joint would need
+           its own (unmodeled) spin-rate dynamics for no benefit here --
+           thrust/torque are applied directly via xfrc_applied on the
+           x500 body, same approach as the Crazyflie 2 validation.) -->
+      <body name="rotor0" pos="0.174 -0.174 0.06">
+        <inertial pos="0 0 0" mass="0.016076923076923075" diaginertia="3.8464910483993325e-07 2.6115851691700804e-05 2.649858234714004e-05"/>
+        <geom name="rotor0_geom" type="cylinder" size="0.06 0.002" rgba="0.6 0.1 0.1 0.5" contype="0" conaffinity="0"/>
+      </body>
+      <body name="rotor1" pos="-0.174 0.174 0.06">
+        <inertial pos="0 0 0" mass="0.016076923076923075" diaginertia="3.8464910483993325e-07 2.6115851691700804e-05 2.649858234714004e-05"/>
+        <geom name="rotor1_geom" type="cylinder" size="0.06 0.002" rgba="0.6 0.1 0.1 0.5" contype="0" conaffinity="0"/>
+      </body>
+      <body name="rotor2" pos="0.174 0.174 0.06">
+        <inertial pos="0 0 0" mass="0.016076923076923075" diaginertia="3.8464910483993325e-07 2.6115851691700804e-05 2.649858234714004e-05"/>
+        <geom name="rotor2_geom" type="cylinder" size="0.06 0.002" rgba="0.1 0.1 0.6 0.5" contype="0" conaffinity="0"/>
+      </body>
+      <body name="rotor3" pos="-0.174 -0.174 0.06">
+        <inertial pos="0 0 0" mass="0.016076923076923075" diaginertia="3.8464910483993325e-07 2.6115851691700804e-05 2.649858234714004e-05"/>
+        <geom name="rotor3_geom" type="cylinder" size="0.06 0.002" rgba="0.1 0.1 0.6 0.5" contype="0" conaffinity="0"/>
+      </body>
+    </body>
+
+    <body name="obstacle0" mocap="true" pos="1.5 1.5 1.0">
+      <geom type="sphere" size="0.3" rgba="0.9 0.2 0.2 0.35" contype="0" conaffinity="0"/>
+    </body>
+    <body name="target_marker" mocap="true" pos="3.0 3.0 2.0">
+      <geom type="sphere" size="0.08" rgba="0.2 0.9 0.2 0.6" contype="0" conaffinity="0"/>
+    </body>
+  </worldbody>
+</mujoco>
